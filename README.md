@@ -1,4 +1,4 @@
-[![codecov](https://codecov.io/gh/erikkasimier/dotNOVI-2026-04/graph/badge.svg?token=OAZGZHWM0F)](https://codecov.io/gh/erikkasimier/dotNOVI-2026-04)
+[![codecov](https://codecov.io/github/erikkasimier/dotNOVI-2026-04/branch/feature%2Fteacher/graph/badge.svg?token=OAZGZHWM0F)](https://codecov.io/github/erikkasimier/dotNOVI-2026-04)
 
 # dotNOVI Application
 
