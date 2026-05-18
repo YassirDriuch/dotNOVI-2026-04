@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/github/erikkasimier/dotNOVI-2026-04/tree/feature%2Fteacher/graph/badge.svg)](https://codecov.io/gh/erikkasimier/dotNOVI-2026-04)
+
 # dotNOVI Application
 
 Een eenvoudige Node.js applicatie voor het NOVI Hogeschool DevOps cursus. Deze applicatie dient als basis voor het leren van DevOps-praktijken, inclusief containerisatie, CI/CD, en deployment.
