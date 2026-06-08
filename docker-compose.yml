@@ -1,0 +1,24 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.multistage
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgresql://dotnovi:dotnovi123@postgres:5432/dotnovi
+    ports:
+      - "3000:3000"
+
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: dotnovi
+      POSTGRES_PASSWORD: dotnovi123
+      POSTGRES_DB: dotnovi
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - ./init/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  postgres_data:
