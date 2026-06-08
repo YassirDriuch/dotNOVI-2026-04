@@ -6,12 +6,12 @@ on:
   pull_request:
     branches: [main]
 
-    schedule:
-      -cron: '0 9 * * *'
+  schedule:
+    - cron: '0 9 * * *'
 
-    workflow_dispatch:
-      inputs:
-        environment:
+  workflow_dispatch:
+    inputs:
+      environment:
           description: 'Environment to deploy'
           required: true
 
@@ -30,7 +30,9 @@ jobs:
         ports:
           - 5432:5432
 
+
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
