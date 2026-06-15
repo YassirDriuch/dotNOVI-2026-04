@@ -26,7 +26,7 @@ jobs:
 
     outputs:
       image_tags: ${{ steps.meta.outputs.tags }}
-      image_tag: ${{ env.IMAGE_NAME }}:latest
+      image_tag: ${{ env.IMAGE_NAME }}:dev
       image_digest: ${{ steps.build.outputs.digest }}
 
     steps:
