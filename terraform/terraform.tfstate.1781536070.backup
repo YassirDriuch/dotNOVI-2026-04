@@ -1,0 +1,315 @@
+{
+  "version": 4,
+  "terraform_version": "1.15.6",
+  "serial": 13,
+  "lineage": "2fab6814-d38e-d9ea-12ed-e654bc778b03",
+  "outputs": {
+    "deployment_name": {
+      "value": "dotnovi",
+      "type": "string"
+    },
+    "namespace": {
+      "value": "dotnovi",
+      "type": "string"
+    },
+    "service_name": {
+      "value": "dotnovi",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "managed",
+      "type": "kubernetes_namespace",
+      "name": "dotnovi",
+      "provider": "provider[\"registry.terraform.io/hashicorp/kubernetes\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "dotnovi",
+            "metadata": [
+              {
+                "annotations": null,
+                "generate_name": "",
+                "generation": 0,
+                "labels": {
+                  "name": "dotnovi"
+                },
+                "name": "dotnovi",
+                "resource_version": "15243",
+                "uid": "db946cf7-f1ca-4b18-a4f3-3cfa8879729f"
+              }
+            ],
+            "timeouts": null,
+            "wait_for_default_service_account": false
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 1,
+          "identity": {
+            "api_version": "v1",
+            "kind": "Namespace",
+            "name": "dotnovi"
+          },
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiZGVsZXRlIjozMDAwMDAwMDAwMDB9fQ=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "kubernetes_pod_disruption_budget_v1",
+      "name": "dotnovi",
+      "provider": "provider[\"registry.terraform.io/hashicorp/kubernetes\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "dotnovi/dotnovi-pdb",
+            "metadata": [
+              {
+                "annotations": null,
+                "generate_name": "",
+                "generation": 1,
+                "labels": null,
+                "name": "dotnovi-pdb",
+                "namespace": "dotnovi",
+                "resource_version": "15249",
+                "uid": "0f476368-e6b9-4134-a8a6-db432196bc48"
+              }
+            ],
+            "spec": [
+              {
+                "max_unavailable": "",
+                "min_available": "2",
+                "selector": [
+                  {
+                    "match_expressions": [],
+                    "match_labels": {
+                      "app": "dotnovi"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "kubernetes_namespace.dotnovi"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "kubernetes_secret",
+      "name": "dotnovi_secrets",
+      "provider": "provider[\"registry.terraform.io/hashicorp/kubernetes\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "binary_data": null,
+            "binary_data_wo": null,
+            "binary_data_wo_revision": null,
+            "data": {
+              "database-url": "postgresql://postgres:postgrespassword@postgres.dotnovi.svc.cluster.local:5432/dotnovi"
+            },
+            "data_wo": null,
+            "data_wo_revision": null,
+            "id": "dotnovi/dotnovi-secrets",
+            "immutable": false,
+            "metadata": [
+              {
+                "annotations": null,
+                "generate_name": "",
+                "generation": 0,
+                "labels": null,
+                "name": "dotnovi-secrets",
+                "namespace": "dotnovi",
+                "resource_version": "15246",
+                "uid": "84f50a7d-4dd9-490b-8b16-725b1fdc06ee"
+              }
+            ],
+            "timeouts": null,
+            "type": "Opaque",
+            "wait_for_service_account_token": true
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "binary_data"
+              }
+            ],
+            [
+              {
+                "type": "get_attr",
+                "value": "data"
+              }
+            ],
+            [
+              {
+                "type": "get_attr",
+                "value": "data"
+              },
+              {
+                "type": "index",
+                "value": {
+                  "value": "database-url",
+                  "type": "string"
+                }
+              }
+            ]
+          ],
+          "identity_schema_version": 1,
+          "identity": {
+            "api_version": "v1",
+            "kind": "Secret",
+            "name": "dotnovi-secrets",
+            "namespace": "dotnovi"
+          },
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMH19",
+          "dependencies": [
+            "kubernetes_namespace.dotnovi"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "kubernetes_service",
+      "name": "postgres",
+      "provider": "provider[\"registry.terraform.io/hashicorp/kubernetes\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "id": "dotnovi/postgres",
+            "metadata": [
+              {
+                "annotations": null,
+                "generate_name": "",
+                "generation": 0,
+                "labels": {
+                  "app": "postgres"
+                },
+                "name": "postgres",
+                "namespace": "dotnovi",
+                "resource_version": "15296",
+                "uid": "2543a074-d0c2-4481-b0cb-84cb60d31719"
+              }
+            ],
+            "spec": [
+              {
+                "allocate_load_balancer_node_ports": true,
+                "cluster_ip": "10.106.237.193",
+                "cluster_ips": [
+                  "10.106.237.193"
+                ],
+                "external_ips": null,
+                "external_name": "",
+                "external_traffic_policy": "",
+                "health_check_node_port": 0,
+                "internal_traffic_policy": "Cluster",
+                "ip_families": [
+                  "IPv4"
+                ],
+                "ip_family_policy": "SingleStack",
+                "load_balancer_class": "",
+                "load_balancer_ip": "",
+                "load_balancer_source_ranges": null,
+                "port": [
+                  {
+                    "app_protocol": "",
+                    "name": "postgres",
+                    "node_port": 0,
+                    "port": 5432,
+                    "protocol": "TCP",
+                    "target_port": "postgres"
+                  }
+                ],
+                "publish_not_ready_addresses": false,
+                "selector": {
+                  "app": "postgres"
+                },
+                "session_affinity": "None",
+                "session_affinity_config": [],
+                "type": "ClusterIP"
+              }
+            ],
+            "status": [
+              {
+                "load_balancer": [
+                  {
+                    "ingress": []
+                  }
+                ]
+              }
+            ],
+            "timeouts": null,
+            "wait_for_load_balancer": true
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 1,
+          "identity": {
+            "api_version": "v1",
+            "kind": "Service",
+            "name": "postgres",
+            "namespace": "dotnovi"
+          },
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDB9LCJzY2hlbWFfdmVyc2lvbiI6IjEifQ==",
+          "dependencies": [
+            "kubernetes_deployment.postgres",
+            "kubernetes_namespace.dotnovi"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "kubernetes_service_account",
+      "name": "dotnovi",
+      "provider": "provider[\"registry.terraform.io/hashicorp/kubernetes\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "automount_service_account_token": true,
+            "default_secret_name": "",
+            "id": "dotnovi/dotnovi",
+            "image_pull_secret": [],
+            "metadata": [
+              {
+                "annotations": null,
+                "generate_name": "",
+                "generation": 0,
+                "labels": null,
+                "name": "dotnovi",
+                "namespace": "dotnovi",
+                "resource_version": "15248",
+                "uid": "2c9061ea-4fb6-4da9-8959-28b9e693f23f"
+              }
+            ],
+            "secret": [],
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 1,
+          "identity": {
+            "api_version": "v1",
+            "kind": "ServiceAccount",
+            "name": "dotnovi",
+            "namespace": "dotnovi"
+          },
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "kubernetes_namespace.dotnovi"
+          ]
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}
