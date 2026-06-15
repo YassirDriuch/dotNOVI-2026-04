@@ -25,12 +25,10 @@ jobs:
           echo "[IMAGE] Deploying image: $IMAGE_TAG"
 
       - name: Trigger Render  deploy
-        env:
-          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
-          IMAGE_TAG: ${{ steps.image.outputs.image_tag }}
+
         run: |
           echo "Triggering Render deploy"
-          curl -fsS --get "$RENDER_DEPLOY_HOOK" --data-urlencode "imgURL=$IMAGE_TAG"
+          curl -X POST "${{secrets.RENDER_DEPLOY_HOOK}}"
 
       - name: Wait for Render
         run: |
