@@ -10,15 +10,18 @@ on:
       - 'Dockerfile'
       - '.github/workflows/cd.yml'
 
+permissions:
+  contents: read
+  packages: write
+  security-events: write
+
 jobs:
   build-and-push:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
-    permissions:
-      contents: read
-      packages: write
+
 
     outputs:
       image_tag: ${{ steps.version.outputs.image }}:v${{ steps.version.outputs.version }}
@@ -31,7 +34,7 @@ jobs:
       - name: Get version from package.json
         id: version
         run: |
-          echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+          echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
           echo "image=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx
@@ -55,6 +58,8 @@ jobs:
             type=ref,event=branch
             type=sha,prefix={{branch}}-
             type=raw,value=latest,enable={{is_default_branch}}
+
+
       - name: Build and push Docker image
         id: build
         uses: docker/build-push-action@v7
@@ -75,6 +80,9 @@ jobs:
     if: always()
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
