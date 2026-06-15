@@ -1,8 +1,5 @@
 name: Continuous Deployment
 
-env:
-  IMAGE_NAME: ghcr.io/yassirdriuch/dotnovi
-
 on:
   push:
     branches:
@@ -25,8 +22,7 @@ jobs:
       security-events: write
 
     outputs:
-      image_tags: ${{ steps.meta.outputs.tags }}
-      image_tag: ${{ env.IMAGE_NAME }}:dev
+      image_tag: ${{ steps.meta.outputs.tags }}
       image_digest: ${{ steps.build.outputs.digest }}
 
     steps:
@@ -47,7 +43,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ${{ env.IMAGE_NAME }}
+          images: ghcr.io/${{ github.repository }}
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
@@ -72,6 +68,13 @@ jobs:
     if: always()
 
     steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
