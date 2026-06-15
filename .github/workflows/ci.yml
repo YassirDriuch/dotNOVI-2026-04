@@ -23,10 +23,13 @@ jobs:
       postgres:
         image: postgres:16
         env:
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: dotnovi
         options: >-
-          --health-cmd pg-isready
+          --health-cmd "pg-isready -U postgres"
           --health-interval 10s
+          --health-timeout 5s
           --health-retries 10
           --health-start-period 30s
         ports:
