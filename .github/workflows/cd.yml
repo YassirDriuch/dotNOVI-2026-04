@@ -1,5 +1,8 @@
 name: Continuous Deployment
 
+env:
+  IMAGE_NAME: ghcr.io/yassirdriuch/dotnovi
+
 on:
   push:
     branches:
@@ -23,6 +26,7 @@ jobs:
 
     outputs:
       image_tags: ${{ steps.meta.outputs.tags }}
+      image_tag: ${{ env.IMAGE_NAME }}:latest
       image_digest: ${{ steps.build.outputs.digest }}
 
     steps:
