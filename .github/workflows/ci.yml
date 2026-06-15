@@ -25,7 +25,6 @@ jobs:
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
-          options: >-
           --health-cmd pg-isready
           --health-interval 10s
           --health-retries 10
