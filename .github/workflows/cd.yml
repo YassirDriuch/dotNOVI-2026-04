@@ -21,7 +21,7 @@ jobs:
       packages: write
 
     outputs:
-      image_tag: ghcr.io/${{ github.repository }}:v${{ steps.version.outputs.version }}
+      image_tag: ${{ steps.version.outputs.image }}:v${{ steps.version.outputs.version }}
       image_digest: ${{ steps.build.outputs.digest }}
 
     steps:
@@ -30,7 +30,9 @@ jobs:
 
       - name: Get version from package.json
         id: version
-        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+        run: |
+          echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+          echo "image=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -46,7 +48,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ${{ steps.version.outputs.image }}
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
@@ -60,8 +62,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:v${{ steps.version.outputs.version }}
-            ghcr.io/${{ github.repository }}:latest
+            ${{ steps.version.outputs.image }}:v${{ steps.version.outputs.version }}
+            ${{ steps.version.outputs.image }}:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
