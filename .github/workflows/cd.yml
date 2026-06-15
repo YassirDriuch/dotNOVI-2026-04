@@ -1,8 +1,5 @@
 name: Continuous Deployment
 
-env:
-  IMAGE_URL: ghcr.io/yassirdriuch/dotnovi
-
 on:
   push:
     branches:
@@ -13,22 +10,19 @@ on:
       - 'Dockerfile'
       - '.github/workflows/cd.yml'
 
-permissions:
-  contents: read
-  packages: write
-  security-events: write
-
 jobs:
   build-and-push:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
-
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
 
     outputs:
-      image_tags: ${{ steps.meta.outputs.tags }}
-      image_tag: ${{env.IMAGE_URL}}:dev
+      image_tag: ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }}
       image_digest: ${{ steps.build.outputs.digest }}
 
     steps:
@@ -49,7 +43,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ${{ env.IMAGE_URL }}
+          images: ghcr.io/${{ github.repository }}
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
