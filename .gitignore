@@ -29,3 +29,11 @@ build/
 # Logs
 logs/
 *.log
+
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+!terraform.lock.hcl
