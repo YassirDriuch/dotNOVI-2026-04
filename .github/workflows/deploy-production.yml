@@ -12,63 +12,47 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to Production
+    name: Blue-Green Deployment
     runs-on: ubuntu-latest
     environment: production
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
+      - name: Get image tag
+        id: image
+        run: |
+          IMAGE_TAG="${{ github.event.client_payload.image_tag || inputs.image_tag }}"
+          echo "image_tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
+          echo "[IMAGE] Deploying image: $IMAGE_TAG"
 
-      - name: Verify image exists
-        run: |
-          docker pull ${{ github.event.client_payload.image_tag || inputs.image_tag }}
-      - name: Deploy to production
+      - name: Trigger Render  deploy
         env:
-          IMAGE_TAG: ${{ github.event.client_payload.image_tag || inputs.image_tag }}
-          DEPLOYMENT_ENV: production
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+          IMAGE_TAG: ${{ steps.image.outputs.image_tag }}
         run: |
-          # This is a placeholder
-          # In real scenario, this would:
-          # - SSH to production server
-          # - Run docker pull and docker run
-          # - Update load balancer
-          # - Run health checks
-          # - Rollback on failure
-          echo "Deploying image: $IMAGE_TAG"
-          echo "Environment: $DEPLOYMENT_ENV"
-          # Example: Update Kubernetes
-          # kubectl set image deployment/dotnovi app=$IMAGE_TAG --record
-          # Example: Update Docker Swarm
-          # docker service update --image $IMAGE_TAG dotnovi-app
-      - name: Run smoke tests
+          echo "Triggering Render deploy"
+          curl -fsS --get "$RENDER_DEPLOY_HOOK" --data-urlencode "imgURL=$IMAGE_TAG"
+
+      - name: Wait for Render
         run: |
-          # Wait for service to be ready
-          sleep 10
-          # Check health endpoint
-          curl -f http://localhost:3000/health || exit 1
-          # Check API endpoint
-          curl -f http://localhost:3000/api/notes || exit 1
+          echo "Waiting for Render to start the new instance"
+          sleep 90
+
+      - name: Smoke test production
+        run: |
+          echo "[SMOKE] Testing production health endpoint"
+          curl -f "${{ secrets.RENDER_SERVICE_URL }}/health"
+          
+          echo "[SMOKE] Testing production API endpoint"
+          curl -f "${{ secrets.RENDER_SERVICE_URL }}/api/notes"
+
   rollback:
     name: Rollback Deployment
     runs-on: ubuntu-latest
     needs: deploy
-    if: failure()
+    if: always() && needs.deploy.result == 'failure'
     environment: production
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Get previous image tag
-        id: previous
+      - name: Rollback info
         run: |
-          # Get the previous deployment's image tag
-          # This would normally come from your deployment tracking system
-          echo "image_tag=dotnovi:previous" >> $GITHUB_OUTPUT
-      - name: Rollback to previous version
-        env:
-          PREVIOUS_IMAGE: ${{ steps.previous.outputs.image_tag }}
-        run: |
-          echo "Rolling back to: $PREVIOUS_IMAGE"
-          # kubectl rollout undo deployment/dotnovi
+          echo "[ROLLBACK] Render deployment failed."
