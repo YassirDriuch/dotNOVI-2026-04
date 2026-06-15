@@ -21,7 +21,7 @@ jobs:
       packages: write
 
     outputs:
-      image_tag: ${{ steps.meta.outputs.tags }}
+      image_tag: ghcr.io/${{ github.repository }}:latest
       image_digest: ${{ steps.build.outputs.digest }}
 
     steps:
