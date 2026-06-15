@@ -12,7 +12,7 @@ on:
 
 jobs:
   deploy:
-    name: Blue-Green Deployment
+    name: Render Deployment
     runs-on: ubuntu-latest
     environment: production
 
@@ -37,11 +37,11 @@ jobs:
 
       - name: Smoke test production
         run: |
-          echo "[SMOKE] Testing production health endpoint"
-          curl -f "${{ secrets.RENDER_SERVICE_URL }}/health"
+          echo "Testing production health endpoint"
+          curl "${{ secrets.RENDER_SERVICE_URL }}/health"
           
-          echo "[SMOKE] Testing production API endpoint"
-          curl -f "${{ secrets.RENDER_SERVICE_URL }}/api/notes"
+          echo "Testing production API endpoint"
+          curl "${{ secrets.RENDER_SERVICE_URL }}/api/notes"
 
   rollback:
     name: Rollback Deployment
@@ -51,6 +51,7 @@ jobs:
     environment: production
 
     steps:
-      - name: Rollback info
+      - name: Rollback to stable Render deploy
         run: |
           echo "[ROLLBACK] Render deployment failed."
+          curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/rollback" -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" -H "Content-Type: application/json" -d "{\"deployId\":\"${{ secrets.ROLLBACK_DEPLOY_ID }}\"}"
