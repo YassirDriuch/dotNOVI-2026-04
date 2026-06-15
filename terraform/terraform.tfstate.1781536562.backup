@@ -1,0 +1,66 @@
+{
+  "version": 4,
+  "terraform_version": "1.15.6",
+  "serial": 32,
+  "lineage": "2fab6814-d38e-d9ea-12ed-e654bc778b03",
+  "outputs": {
+    "deployment_name": {
+      "value": "dotnovi",
+      "type": "string"
+    },
+    "namespace": {
+      "value": "dotnovi",
+      "type": "string"
+    },
+    "service_name": {
+      "value": "dotnovi",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "managed",
+      "type": "kubernetes_service_account",
+      "name": "dotnovi",
+      "provider": "provider[\"registry.terraform.io/hashicorp/kubernetes\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "automount_service_account_token": true,
+            "default_secret_name": "",
+            "id": "dotnovi/dotnovi",
+            "image_pull_secret": [],
+            "metadata": [
+              {
+                "annotations": null,
+                "generate_name": "",
+                "generation": 0,
+                "labels": null,
+                "name": "dotnovi",
+                "namespace": "dotnovi",
+                "resource_version": "19083",
+                "uid": "a0c023c1-f1f2-4714-aa2f-d9c0fd0af1b3"
+              }
+            ],
+            "secret": [],
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 1,
+          "identity": {
+            "api_version": "v1",
+            "kind": "ServiceAccount",
+            "name": "dotnovi",
+            "namespace": "dotnovi"
+          },
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "kubernetes_namespace.dotnovi"
+          ]
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}

@@ -1,4 +1,4 @@
-# Les 7: Infrastructure as Code met Terraform
+t# Les 7: Infrastructure as Code met Terraform
 
 ## Doelstellingen
 
