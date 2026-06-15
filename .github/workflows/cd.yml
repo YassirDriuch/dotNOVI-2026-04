@@ -1,5 +1,8 @@
 name: Continuous Deployment
 
+env:
+  IMAGE_URL: ghcr.io/yassirdriuch/dotnovi
+
 on:
   push:
     branches:
@@ -22,7 +25,8 @@ jobs:
       security-events: write
 
     outputs:
-      image_tag: ${{ steps.meta.outputs.tags }}
+      image_tags: ${{ steps.meta.outputs.tags }}
+      image_tag: ${{env.IMAGE_URL}}:dev
       image_digest: ${{ steps.build.outputs.digest }}
 
     steps:
