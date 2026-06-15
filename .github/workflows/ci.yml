@@ -53,8 +53,13 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: echo "Deploying!"
 
+      - name: Upload coverage
+        uses: codecov/codecov-action@v6
+        with:
+          files: ./coverage/lcov.info
+
     strategy:
       matrix:
-        node-version: [18, 20]
+        node-version: [18, 20, 24]
 
 
