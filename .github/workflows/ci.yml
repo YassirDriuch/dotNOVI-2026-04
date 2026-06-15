@@ -63,3 +63,11 @@ jobs:
         node-version: [18, 20, 24]
 
 
+  deploy:
+    needs: [ test ]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to production
+        run: echo "Deploying..."
