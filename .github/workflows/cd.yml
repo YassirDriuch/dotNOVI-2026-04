@@ -21,8 +21,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
-
-
     outputs:
       image_tag: ${{ steps.version.outputs.image }}:v${{ steps.version.outputs.version }}
       image_digest: ${{ steps.build.outputs.digest }}
