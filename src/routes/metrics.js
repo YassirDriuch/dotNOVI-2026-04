@@ -1,7 +1,7 @@
 import express from 'express'
 import { collectDefaultMetrics, register } from 'prom-client';
 
-const router = express();
+const router = express.Router();
 
 // Standaard metrics: CPU, memory, event loop
 collectDefaultMetrics();
