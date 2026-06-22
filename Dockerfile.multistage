@@ -1,0 +1,62 @@
+# Multi-stage Dockerfile for dotNOVI application
+# Stage 1: Build stage - installs all dependencies including dev
+FROM node:20 AS builder
+
+LABEL stage=builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev)
+RUN npm ci
+
+# Copy source code
+COPY src ./src
+COPY tests ./tests
+COPY eslint.config.js jest.config.js ./
+
+# Optional: Run tests and linting
+RUN npm run lint && npm test
+
+# Stage 2: Production stage - only production dependencies
+FROM node:20-alpine AS production
+
+LABEL maintainer="NOVI Hogeschool"
+LABEL stage=production
+
+WORKDIR /app
+
+# Install dumb-init to handle signals properly
+RUN apk add --no-cache dumb-init
+
+# Create non-root user
+RUN addgroup -g 1001 nodejs && \
+    adduser -S nodejs -u 1001
+
+# Copy package files and install production dependencies only
+COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
+
+# Copy application code from builder stage
+COPY --from=builder /app/src ./src
+
+# Set ownership
+RUN chown -R nodejs:nodejs /app
+
+# Switch to non-root user
+USER nodejs
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+
+# Expose port
+EXPOSE 3000
+
+# Use dumb-init to properly handle signals
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+
+# Run application
+CMD ["node", "src/index.js"]
