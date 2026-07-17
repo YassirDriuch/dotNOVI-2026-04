@@ -11,13 +11,19 @@ updates:
     reviewers:
       - "YassirDriuch"
     commit-message:
-      prefix: "chore(deps):"
+      prefix: "chore"
       include: "scope"
     allow:
       - dependency-type: "all"
     ignore:
     # Add any packages to ignore
     # - dependency-name: "lodash"
+    groups:
+      npm-minor-patch:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
 
   # Enable version updates for Docker dependencies
   - package-ecosystem: "docker"
@@ -38,3 +44,9 @@ updates:
       time: "04:00"
     reviewers:
       - "YassirDriuch"
+    groups:
+      actions-all:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
