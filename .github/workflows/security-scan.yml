@@ -3,6 +3,7 @@ name: Security Scan
 on:
   schedule:
     - cron: '0 2 * * *'  # Daily at 2 AM
+  workflow_dispatch:  
 
 jobs:
   scan:
@@ -12,4 +13,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-      - run: npm audit --audit-level=moderate
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run npm audit
+        run: npm audit --audit-level=moderate
