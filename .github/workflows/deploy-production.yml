@@ -37,7 +37,7 @@ jobs:
 
       - name: Smoke test production
         run: |
-          HEALTH_URL="${RENDER_SERVICE_URL%/}/health"
+          HEALTH_URL="${{ secrets.RENDER_SERVICE_URL }}/health"
 
           echo "Testing: $HEALTH_URL"
 
