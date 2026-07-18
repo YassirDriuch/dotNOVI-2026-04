@@ -18,7 +18,7 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-RUN addgroup -g 1001 nodejs && adduser -S nodejs -u 1001 -G nodejs
+RUN apk update && apk upgrade --no-cache && addgroup -g 1001 nodejs && adduser -S nodejs -u 1001 -G nodejs
 
 # COPY: Meer bestanden
 COPY --from=build --chown=nodejs:nodejs /app/node_modules ./node_modules
