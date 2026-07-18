@@ -9,6 +9,9 @@ on:
       - 'package.json'
       - 'Dockerfile'
       - '.github/workflows/cd.yml'
+  workflow_run:
+    workflows: ["dotNovi"]
+    types: [completed]
 
 permissions:
   contents: write
@@ -64,6 +67,7 @@ jobs:
           context: .
           push: true
           tags: |
+            ${{ steps.version.outputs.image }}:v${{ steps.meta.outputs.tags }}
             ${{ steps.version.outputs.image }}:v${{ steps.version.outputs.version }}
             ${{ steps.version.outputs.image }}:latest
           labels: ${{ steps.meta.outputs.labels }}
