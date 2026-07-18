@@ -85,6 +85,7 @@ jobs:
         with:
           image-ref: ${{ needs.build-and-push.outputs.image_tag }}
           format: 'sarif'
+          output: 'trivy-results.sarif'
           exit-code: '1'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
