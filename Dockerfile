@@ -25,7 +25,7 @@ RUN apk update && apk upgrade --no-cache \
 # COPY: Meer bestanden
 COPY --from=build --chown=nodejs:nodejs /app/node_modules ./node_modules
 COPY --chown=nodejs:nodejs src ./src
-COPY --chown=nodejs:nodejs package.json ./
+COPY --chown=nodejs:nodejs package*.json ./
 
 USER nodejs
 
