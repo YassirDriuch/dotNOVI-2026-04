@@ -10,7 +10,6 @@ on:
       - 'Dockerfile'
       - '.github/workflows/cd.yml'
 
-
 permissions:
   contents: write
   packages: write
