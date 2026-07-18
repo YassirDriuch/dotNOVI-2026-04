@@ -2,7 +2,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile.multistage
+      dockerfile: Dockerfile
     depends_on:
       - postgres
     environment:
