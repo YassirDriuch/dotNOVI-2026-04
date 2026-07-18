@@ -18,7 +18,7 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main'
 
     outputs:
-      image_tag: ${{ steps.version.outputs.image }}:v${{ steps.version.outputs.version }}
+      image_tag: ${{ steps.version.outputs.image }}:sha-${{ github.sha }}
       image_digest: ${{ steps.build.outputs.digest }}
 
     steps:
@@ -63,6 +63,7 @@ jobs:
           push: true
           tags: |
             ${{ steps.version.outputs.image }}:v${{ steps.version.outputs.version }}
+            ${{ steps.version.outputs.image }}:sha-${{ github.sha }}
             ${{ steps.version.outputs.image }}:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
