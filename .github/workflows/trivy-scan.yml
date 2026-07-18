@@ -14,7 +14,7 @@ jobs:
         with:
           image-ref: 'ghcr.io/yassirdriuch/dotnovi-2026-04:latest'
           format: 'table'
-          exit-code: '0'
+          exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
