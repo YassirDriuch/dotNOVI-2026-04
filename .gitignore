@@ -32,8 +32,12 @@ logs/
 
 
 # Terraform
-.terraform/
+**/.terraform/*
 *.tfstate
-*.tfstate.backup
+*.tfstate.*
 *.tfvars
+*.tfvars.json
+crash.log
+crash.*.log
+!*.tfvars.example
 !terraform.lock.hcl

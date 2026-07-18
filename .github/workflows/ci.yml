@@ -62,10 +62,6 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Deploy
-        if: github.ref == 'refs/heads/main'
-        run: echo "Deploying!"
-
       - name: Upload coverage
         uses: codecov/codecov-action@v6
         with:
