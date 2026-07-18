@@ -1,9 +1,6 @@
 name: Continuous Deployment
 
 on:
-  workflow_run:
-    workflows: ["dotNovi"]
-    types: [completed]
   push:
     branches:
       - main
