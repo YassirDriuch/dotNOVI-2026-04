@@ -21,10 +21,41 @@ jobs:
         id: image
         run: |
           IMAGE_TAG="${{ github.event.client_payload.image_tag || inputs.image_tag }}"
+          if [ -z "$IMAGE_TAG" ]; then
+            echo "ERROR: No image tag provided. Please provide an image tag via the workflow_dispatch input or the repository_dispatch payload."
+            exit 1
+          fi
           echo "image_tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
           echo "[IMAGE] Deploying image: $IMAGE_TAG"
+          
+      - name: Remember current production deployment
+        id: previous_deploy
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+        run: |
+          set -euo pipefail
 
-      - name: Trigger Render  deploy
+          deployments="$(curl \
+            --fail-with-body \
+            --silent \
+            --show-error \
+            --header "Authorization: Bearer ${RENDER_API_KEY}" \
+            --header "Accept: application/json" \
+            "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys?status=live&limit=1")"
+
+          previous_deploy_id="$(echo "$deployments" |
+            jq -r '.[0].deploy.id // empty')"
+
+          if [ -z "$previous_deploy_id" ]; then
+            echo "::error::Geen huidige Render-deployment gevonden"
+            exit 1
+          fi
+
+          echo "Current production deployment: $previous_deploy_id"
+          echo "deploy_id=$previous_deploy_id" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger Render deploy
 
         run: |
           echo "Triggering Render deploy"
@@ -78,7 +109,63 @@ jobs:
     environment: production
 
     steps:
-      - name: Rollback to stable Render deploy
+      - name: Rollback to previous Render deployment
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+          RENDER_SERVICE_URL: ${{ secrets.RENDER_SERVICE_URL }}
+          PREVIOUS_DEPLOY_ID: ${{ needs.deploy.outputs.previous_deploy_id }}
         run: |
-          echo "[ROLLBACK] Render deployment failed."
-          curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/rollback" -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" -H "Content-Type: application/json" -d "{\"deployId\":\"${{ secrets.ROLLBACK_DEPLOY_ID }}\"}"
+          set -euo pipefail
+
+          if [ -z "$PREVIOUS_DEPLOY_ID" ]; then
+            echo "::error::Geen vorige deployment-ID beschikbaar"
+            exit 1
+          fi
+
+          echo "[ROLLBACK] Rolling back to: $PREVIOUS_DEPLOY_ID"
+
+          PAYLOAD="$(jq -n \
+            --arg deployId "$PREVIOUS_DEPLOY_ID" \
+            '{deployId: $deployId}')"
+
+          ROLLBACK_RESPONSE="$(curl \
+            --fail-with-body \
+            --silent \
+            --show-error \
+            --request POST \
+            "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/rollback" \
+            --header "Authorization: Bearer ${RENDER_API_KEY}" \
+            --header "Content-Type: application/json" \
+            --header "Accept: application/json" \
+            --data "$PAYLOAD")"
+
+          echo "Rollback response: $ROLLBACK_RESPONSE"
+          echo "Waiting for the previous deployment to become healthy"
+
+          for attempt in {1..12}; do
+            if HEALTH_RESPONSE="$(curl \
+              --fail-with-body \
+              --silent \
+              --show-error \
+              --connect-timeout 10 \
+              --max-time 20 \
+              "${RENDER_SERVICE_URL}/health")"; then
+
+              if echo "$HEALTH_RESPONSE" |
+                jq -e \
+                  '.status == "healthy" and .database == "connected"' \
+                  > /dev/null; then
+
+                echo "Rollback succeeded"
+                echo "Health response: $HEALTH_RESPONSE"
+                exit 0
+              fi
+            fi
+
+            echo "Rollback not healthy yet, attempt ${attempt}/12"
+            sleep 10
+          done
+
+          echo "::error::Rollback was triggered, but production did not become healthy"
+          exit 1
