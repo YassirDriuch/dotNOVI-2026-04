@@ -10,6 +10,12 @@ on:
         required: true
         type: string
 
+      test_rollback:
+        description: 'Force rollback after successful smoke test'
+        required: false
+        default: false
+        type: boolean
+
 jobs:
   deploy:
     name: Render Deployment
@@ -100,6 +106,11 @@ jobs:
           
           echo "Testing production API endpoint"
           curl "${{ secrets.RENDER_SERVICE_URL }}/api/notes"
+      - name: Force failure for rollback test
+        if: github.event_name == 'workflow_dispatch' && inputs.test_rollback == true
+        run: |
+          echo "::warning::Intentional failure to test rollback"
+          exit 1
 
   rollback:
     name: Rollback Deployment
