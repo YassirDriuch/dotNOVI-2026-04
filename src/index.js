@@ -29,7 +29,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Routes
 app.use('/health', healthRoutes);
-app.use('/metrics', metricsRoutes)
+app.use(metricsRoutes)
 app.use('/api/notes', notesRoutes);
 app.use('/api/about', aboutRoutes)
 
