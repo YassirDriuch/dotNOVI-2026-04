@@ -7,7 +7,8 @@ router.get('/', async (req, res) => {
         "author" : "Yassir Driuch",
         "title" : "dotNovi - DevOps",
         "description" : "DevOps Assignment application",
-        "status" : "success"
+        "status" : "success",
+        "message" : "Welcome to the dotNovi DevOps Assignment application"
     });
 });
 
