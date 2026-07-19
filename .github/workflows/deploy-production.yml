@@ -24,7 +24,7 @@ jobs:
 
     outputs:
       previous_deploy_id: ${{ steps.previous_deploy.outputs.deploy_id }}
-
+      
     steps:
       - name: Get image tag
         id: image
@@ -65,18 +65,10 @@ jobs:
           echo "deploy_id=$previous_deploy_id" >> "$GITHUB_OUTPUT"
 
       - name: Trigger Render deploy
-        env:
-          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
-          DEPLOY_SHA: ${{ github.event.client_payload.sha || github.sha }}
-        run: |
-          echo "Triggering Render deploy for commit ${DEPLOY_SHA}"
 
-          curl \
-            --fail-with-body \
-            --silent \
-            --show-error \
-            --request POST \
-            "${RENDER_DEPLOY_HOOK}&ref=${DEPLOY_SHA}"
+        run: |
+          echo "Triggering Render deploy"
+          curl -X POST "${{secrets.RENDER_DEPLOY_HOOK}}"
 
       - name: Wait for Render
         run: |
