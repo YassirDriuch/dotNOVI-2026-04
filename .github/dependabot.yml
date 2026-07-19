@@ -8,16 +8,11 @@ updates:
       day: "sunday"
       time: "03:00"
     open-pull-requests-limit: 5
-    reviewers:
-      - "YassirDriuch"
     commit-message:
       prefix: "chore"
       include: "scope"
     allow:
       - dependency-type: "all"
-    ignore:
-    # Add any packages to ignore
-    # - dependency-name: "lodash"
     groups:
       npm-minor-patch:
         applies-to: version-updates
@@ -32,8 +27,6 @@ updates:
       interval: "weekly"
       day: "sunday"
       time: "03:30"
-    reviewers:
-      - "YassirDriuch"
 
   # Enable version updates for GitHub Actions
   - package-ecosystem: "github-actions"
@@ -42,8 +35,6 @@ updates:
       interval: "weekly"
       day: "sunday"
       time: "04:00"
-    reviewers:
-      - "YassirDriuch"
     groups:
       actions-all:
         applies-to: version-updates
