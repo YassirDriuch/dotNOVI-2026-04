@@ -1,5 +1,5 @@
 # FROM: Base image starten
-FROM node:24-alpine AS build
+FROM node:26-alpine AS build
 
 # LABEL: Metadata
 LABEL maintainer="Yassir"
@@ -14,7 +14,7 @@ COPY package*.json ./
 RUN npm ci --only=production
 
 
-FROM node:24-alpine
+FROM node:26-alpine
 
 WORKDIR /app
 
